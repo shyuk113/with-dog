@@ -5,6 +5,8 @@ import com.example.withdog.auth.application.dto.SignupRequest;
 import com.example.withdog.auth.application.dto.SignupResponse;
 import com.example.withdog.auth.application.dto.TokenResponse;
 import com.example.withdog.global.application.RedisTokenService;
+import com.example.withdog.global.exception.BusinessException;
+import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.global.security.JwtProvider;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
@@ -32,7 +34,7 @@ public class AuthService {
     @Transactional
     public SignupResponse signup(SignupRequest request){
         if(userRepository.existsByEmail(request.email())){
-            throw new IllegalArgumentException("Email already exists");
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(request.password());
@@ -44,10 +46,10 @@ public class AuthService {
 
     @Transactional
     public TokenResponse login(LoginRequest request){
-        User user = userRepository.findByEmail(request.email()).orElseThrow(()->new IllegalArgumentException("Invalid email"));
+        User user = userRepository.findByEmail(request.email()).orElseThrow(()->new BusinessException(ErrorCode.INVALID_CREDENTIALS));
 
         if(!passwordEncoder.matches(request.password(), user.getPassword())){
-            throw new IllegalArgumentException("Invalid password");
+            throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
 
         return issueTokens(user, false);
@@ -63,17 +65,17 @@ public class AuthService {
     @Transactional
     public TokenResponse refresh(String refreshToken){
         if(!jwtProvider.validateToken(refreshToken)) {
-            throw new IllegalArgumentException("Invalid refresh token");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
         Long userId = jwtProvider.getUserId(refreshToken);
 
         String savedToken = redisTokenService.getRefreshToken(userId);
         if(savedToken == null || !savedToken.equals(refreshToken)){
-            throw new IllegalArgumentException("Invalid refresh token");
+            throw new BusinessException(ErrorCode.INVALID_TOKEN);
         }
 
-        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("Invalid user"));
+        User user = userRepository.findById(userId).orElseThrow(()->new BusinessException(ErrorCode.INVALID_TOKEN));
         return issueTokens(user, false);
     }
 
