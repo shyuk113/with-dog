@@ -20,8 +20,7 @@ public class RecommendService {
 
     private final AiModelClient aiModelClient;
     private final DogRepository dogRepository;
-
-    @Transactional(readOnly = true)
+    
     public List<RecommendResponse> recommend(Long dogId, Long userId){
         Dog dog = dogRepository.findByUserIdAndId(userId, dogId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DOG_NOT_FOUND));
