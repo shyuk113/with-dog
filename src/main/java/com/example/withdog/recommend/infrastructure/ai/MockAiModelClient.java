@@ -2,12 +2,14 @@ package com.example.withdog.recommend.infrastructure.ai;
 
 import com.example.withdog.recommend.domain.FeatureVector;
 import com.example.withdog.recommend.domain.RecommendResult;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 
 @Component
+@Profile("local")
 public class MockAiModelClient implements AiModelClient {
 
     @Override
