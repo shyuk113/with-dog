@@ -10,7 +10,6 @@ import com.example.withdog.recommend.domain.RecommendResult;
 import com.example.withdog.recommend.infrastructure.ai.AiModelClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,14 +19,16 @@ public class RecommendService {
 
     private final AiModelClient aiModelClient;
     private final DogRepository dogRepository;
-    
+    private final RecommendFilterService recommendFilterService;
+
     public List<RecommendResponse> recommend(Long dogId, Long userId){
         Dog dog = dogRepository.findByUserIdAndId(userId, dogId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DOG_NOT_FOUND));
 
         FeatureVector featureVector = FeatureVector.from(dog);
         List<RecommendResult> results = aiModelClient.recommend(featureVector);
+        List<RecommendResult> filtered = recommendFilterService.filter(featureVector, results);
 
-        return results.stream().map(RecommendResponse::from).toList();
+        return filtered.stream().map(RecommendResponse::from).toList();
     }
 }
