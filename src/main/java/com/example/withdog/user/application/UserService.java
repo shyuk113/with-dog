@@ -27,7 +27,7 @@ public class UserService {
     @Transactional
     public void updateUserProfile(UpdateUserProfileRequest request, Long userId){
         User user = userRepository.findById(userId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
-        user.updateUserProfile(request.nickname(), request.region());
+        user.updateUserProfile(request.nickname(), request.region(), request.latitude(), request.longitude(), request.address());
     }
 
 }

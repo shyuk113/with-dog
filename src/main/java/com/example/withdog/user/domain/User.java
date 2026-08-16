@@ -31,6 +31,13 @@ public class User extends BaseEntity {
 
     private String providerId;
 
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
+
+    private String address;
+
     @Builder
     private User(String nickname, String name, String email, String password, String region, Provider provider, String providerId) {
         this.nickname = nickname;
@@ -63,8 +70,11 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    public void updateUserProfile(String nickname, String region){
+    public void updateUserProfile(String nickname, String region, Double latitude, Double longitude, String address){
         this.nickname = nickname;
         this.region = region;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.address = address;
     }
 }
