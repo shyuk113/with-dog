@@ -16,12 +16,18 @@ public class RecommendFilterService {
     private static final int OLD_DOG_AGE = 8;
 
     public List<RecommendResult> filter(FeatureVector fv, List<RecommendResult> results){
-        return results.stream()
-                .filter(r->isSuitable(fv, r))
+        List<RecommendResult> base = results.stream()
+                .filter(r -> isSuitable(fv, r))
                 .collect(Collectors.toMap(RecommendResult::courseName, r -> r, (a,b)->a, LinkedHashMap::new))
-                .values()
-                .stream()
-                .toList();
+                .values().stream().toList();
+
+        if (fv.weather() != null && fv.weather().isRaining()) {
+            return base.stream()
+                    .map(r -> new RecommendResult(r.courseName(), r.distanceKm(), r.durationMinutes(),
+                            r.reason() + " (우천 시 우비 착용을 권장합니다)"))
+                    .toList();
+        }
+        return base;
     }
 
     private boolean isSuitable(FeatureVector fv, RecommendResult rr){
