@@ -46,7 +46,7 @@ public class WebClientAiModelClient implements AiModelClient {
         }
 
         return response.courses().stream()
-                .map(c-> new RecommendResult(c.courseName(), c.distanceKm(),c.durationMinutes(),c.reason()))
+                .map(c-> new RecommendResult(c.courseName(), c.distanceKm(),c.durationMinutes(),c.reason(),c.route()))
                 .toList();
     }
 }
