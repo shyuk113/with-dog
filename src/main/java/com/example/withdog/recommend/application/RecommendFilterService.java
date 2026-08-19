@@ -24,7 +24,7 @@ public class RecommendFilterService {
         if (fv.weather() != null && fv.weather().isRaining()) {
             return base.stream()
                     .map(r -> new RecommendResult(r.courseName(), r.distanceKm(), r.durationMinutes(),
-                            r.reason() + " (우천 시 우비 착용을 권장합니다)"))
+                            r.reason() + " (우천 시 우비 착용을 권장합니다)", r.route()))
                     .toList();
         }
         return base;
