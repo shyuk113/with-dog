@@ -1,6 +1,6 @@
 package com.example.withdog.recommend.infrastructure.ai.dto;
 
-import com.example.withdog.recommend.domain.RouteStep;
+import com.example.withdog.route.domain.RouteStep;
 
 import java.util.List;
 

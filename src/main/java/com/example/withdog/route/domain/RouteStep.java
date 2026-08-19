@@ -1,4 +1,4 @@
-package com.example.withdog.recommend.domain;
+package com.example.withdog.route.domain;
 
 public record RouteStep(double lat, double lon) {
 }
