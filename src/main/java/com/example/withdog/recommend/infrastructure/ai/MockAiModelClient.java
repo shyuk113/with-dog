@@ -2,7 +2,7 @@ package com.example.withdog.recommend.infrastructure.ai;
 
 import com.example.withdog.recommend.domain.FeatureVector;
 import com.example.withdog.recommend.domain.RecommendResult;
-import com.example.withdog.recommend.domain.RouteStep;
+import com.example.withdog.route.domain.RouteStep;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 

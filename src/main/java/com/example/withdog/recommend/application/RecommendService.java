@@ -8,6 +8,7 @@ import com.example.withdog.recommend.application.dto.RecommendResponse;
 import com.example.withdog.recommend.domain.FeatureVector;
 import com.example.withdog.recommend.domain.RecommendResult;
 import com.example.withdog.recommend.infrastructure.ai.AiModelClient;
+import com.example.withdog.route.application.RouteService;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import com.example.withdog.weather.application.WeatherService;
@@ -28,6 +29,7 @@ public class RecommendService {
     private final RecommendCacheService recommendCacheService;
     private final WeatherService weatherService;
     private final UserRepository userRepository;
+    private final RouteService routeService;
 
     public List<RecommendResponse> recommend(Long dogId, Long userId, Double lat, Double lng){
         Dog dog = dogRepository.findByUserIdAndId(userId, dogId)
@@ -50,7 +52,10 @@ public class RecommendService {
         FeatureVector fv = FeatureVector.from(dog, resolvedlat, resolvedlon, weather);
 
         List<RecommendResult> results = aiModelClient.recommend(fv);
-        List<RecommendResult> filtered = recommendFilterService.filter(fv, results);
+        List<RecommendResult> withRoute = results.stream().map(
+                r-> new RecommendResult(r.courseName(), r.distanceKm(), r.durationMinutes(), r.reason(), routeService.getWalkingRoute(r.route()))
+        ).toList();
+        List<RecommendResult> filtered = recommendFilterService.filter(fv, withRoute);
         List<RecommendResponse> responses = filtered.stream().map(RecommendResponse::from).toList();
 
         if(useRegisteredLocation){
