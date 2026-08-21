@@ -1,5 +1,6 @@
 package com.example.withdog.global.security;
 
+import com.example.withdog.user.domain.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -27,10 +28,11 @@ public class JwtProvider {
     }
 
     //access token 생성
-    public String createAccessToken(Long userId, String email){
+    public String createAccessToken(Long userId, String email, Role role) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
                 .claim("email",email)
+                .claim("role",role.name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(secretKey)

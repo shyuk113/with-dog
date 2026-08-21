@@ -56,7 +56,7 @@ public class AuthService {
     }
 
     private TokenResponse issueTokens(User user, boolean isNewUser){
-        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail());
+        String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
         String refreshToken = jwtProvider.createRefreshToken(user.getId());
         redisTokenService.saveRefreshToken(user.getId(), refreshToken, refreshTokenExpiration/1000);
         return new TokenResponse(accessToken, refreshToken, accessTokenExpiration/1000, isNewUser);
