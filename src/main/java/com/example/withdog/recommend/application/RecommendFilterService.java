@@ -21,13 +21,14 @@ public class RecommendFilterService {
                 .collect(Collectors.toMap(RecommendResult::courseName, r -> r, (a,b)->a, LinkedHashMap::new))
                 .values().stream().toList();
 
-        if (fv.weather() != null && fv.weather().isRaining()) {
-            return base.stream()
-                    .map(r -> new RecommendResult(r.courseName(), r.distanceKm(), r.durationMinutes(),
-                            r.reason() + " (우천 시 우비 착용을 권장합니다)", r.route()))
-                    .toList();
+        String notice = weatherNotice(fv);
+        if (notice.isEmpty()) {
+            return base;
         }
-        return base;
+
+        return base.stream()
+                .map(r-> new RecommendResult(r.courseName(), r.distanceKm(), r.durationMinutes(), r.reason()
+                +notice, r.route())).toList();
     }
 
     private boolean isSuitable(FeatureVector fv, RecommendResult rr){
@@ -38,5 +39,19 @@ public class RecommendFilterService {
             return false;
         }
         return true;
+    }
+
+    private String weatherNotice(FeatureVector fv){
+        if(fv.weather() == null){
+            return "";
+        }
+        return switch(fv.weather().condition()){
+            case RAIN -> " (우천 시 우비 착용을 권장합니다.)";
+            case SHOWER -> " (소나기 예보가 있어 우비 착용을 권장합니다.)";
+            case RAIN_SNOW -> " (비/눈 예보가 있어 미끄럼 주의 및 방수 용품을 권장합니다.)";
+            case SNOW -> " (적설로 미끄러울 수 있어 미끄럼 방지용품을 권장합니다.)";
+            case POLLEN -> " (꽃가루 농도가 높을 수 있어 알레르기 있는 반려견은 주의하세요)";
+            case CLEAR, CLOUDY -> "";
+        };
     }
 }

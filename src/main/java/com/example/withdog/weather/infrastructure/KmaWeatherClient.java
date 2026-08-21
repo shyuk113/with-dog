@@ -1,5 +1,6 @@
 package com.example.withdog.weather.infrastructure;
 
+import com.example.withdog.weather.domain.Condition;
 import com.example.withdog.weather.domain.GridConverter;
 import com.example.withdog.weather.domain.WeatherInfo;
 import com.example.withdog.weather.infrastructure.dto.KmaResponse;
@@ -54,8 +55,29 @@ public class KmaWeatherClient implements WeatherClient {
 
             List<KmaResponse.Item> items = response.response().body().items().item();
 
-            boolean isRaining = items.stream().filter(i-> "PTY".equals(i.category()))
-                    .anyMatch(i-> !"0".equals(i.fcstValue()));
+            String ptyCode = items.stream()
+                    .filter(i-> "PTY".equals(i.category()))
+                    .findFirst()
+                    .map(KmaResponse.Item::fcstValue)
+                    .orElse("0");
+
+            Condition condition;
+            if(!"0".equals(ptyCode)) {
+                condition = switch (ptyCode) {
+                    case "1" -> Condition.RAIN;
+                    case "2" -> Condition.RAIN_SNOW;
+                    case "3" -> Condition.SNOW;
+                    case "4" -> Condition.SHOWER;
+                    default -> Condition.CLEAR;
+                };
+            } else {
+                String skyCode = items.stream()
+                        .filter(i->"SKY".equals(i.category()))
+                        .findFirst()
+                        .map(KmaResponse.Item::fcstValue)
+                        .orElse("1");
+                condition ="1".equals(skyCode) ? Condition.CLEAR : Condition.CLOUDY;
+            }
 
             double temp = items.stream()
                     .filter(i-> "TMP".equals(i.category()))
@@ -63,7 +85,7 @@ public class KmaWeatherClient implements WeatherClient {
                     .map(i-> Double.parseDouble(i.fcstValue()))
                     .orElse(0.0);
 
-            return new WeatherInfo(isRaining,temp, isRaining ? "RAIN" : "CLEAR");
+            return new WeatherInfo(condition, temp);
         } catch (Exception e){
             log.error("날씨 조회 실패:{}", e.getMessage(), e);
             return WeatherInfo.unknown();
