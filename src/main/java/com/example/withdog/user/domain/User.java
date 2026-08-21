@@ -38,8 +38,11 @@ public class User extends BaseEntity {
 
     private String address;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Builder
-    private User(String nickname, String name, String email, String password, String region, Provider provider, String providerId) {
+    private User(String nickname, String name, String email, String password, String region, Provider provider, String providerId, Role role) {
         this.nickname = nickname;
         this.name = name;
         this.email = email;
@@ -47,6 +50,7 @@ public class User extends BaseEntity {
         this.region = region;
         this.provider = provider;
         this.providerId = providerId;
+        this.role = role;
     }
 
     public static User createUserLocal(String name, String email, String password, String region){
@@ -57,6 +61,7 @@ public class User extends BaseEntity {
                 .password(password)
                 .region(region)
                 .provider(Provider.LOCAL)
+                .role(Role.USER)
                 .build();
     }
 
@@ -67,6 +72,7 @@ public class User extends BaseEntity {
                 .region(region)
                 .provider(provider)
                 .providerId(providerId)
+                .role(Role.USER)
                 .build();
     }
 

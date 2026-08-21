@@ -28,9 +28,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                         "/api/auth/signup", //인증없이 접근 가능한 주소
-                        "/api/auth/login"
-
-                ).permitAll().anyRequest().authenticated())
+                        "/api/auth/login").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(redisTokenService, jwtProvider), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
