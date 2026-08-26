@@ -24,8 +24,10 @@ public class UserService {
         User user = userRepository.findById(targetId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         if(targetId.equals(userId)){
             return UserResponse.from(user);
+            //자신의 정보는 상세정보
         }
         return UserPublicResponse.from(user);
+        //타인의 정보는 간단한 정보만
     }
 
     //유저 프로필 수정
