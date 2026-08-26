@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,13 @@ public class DogService {
     public DogResponse getDog(Long id, Long userId){
         Dog dog = dogRepository.findByUserIdAndId(userId, id).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
         return DogResponse.from(dog);
+    }
+
+    @Transactional(readOnly = true)
+    public List<DogResponse> getDogs(Long userId){
+        return dogRepository.findAllByUserId(userId).stream()
+                .map(DogResponse::from)
+                .toList();
     }
 
     //강아지 정보 수정
