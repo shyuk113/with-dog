@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +49,9 @@ public class WalkService {
     //산책 시작
     @Transactional
     public WalkResponse createWalk(Long userId, CreateWalkRequest request){
+        if(walkRepository.findByUserIdAndEndedAtIsNull(userId).isPresent()){
+            throw new BusinessException(ErrorCode.WALK_ALREADY_ONGOING);
+        }
         User user = userRepository.findById(userId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Dog dog = dogRepository.findByUserIdAndId(userId, request.dogId()).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
         Walk walk = Walk.createWalk(user, dog, LocalDateTime.now());
@@ -62,5 +66,11 @@ public class WalkService {
         routePointRepository.saveAll(request.routePointRequest().stream()
                 .map(r-> RoutePoint.createRoutePoint(r.lat(), r.lon(), r.capturedAt(), walk)).toList());
         walk.end(LocalDateTime.now(), request.distanceKm());
+    }
+
+    //진행중인 산책이 있는지 확인
+    @Transactional(readOnly = true)
+    public Optional<WalkResponse> getOngoingWalk(Long userId){
+        return walkRepository.findByUserIdAndEndedAtIsNull(userId).map(WalkResponse::from);
     }
 }

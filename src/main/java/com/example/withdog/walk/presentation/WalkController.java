@@ -41,4 +41,10 @@ public class WalkController {
         walkService.updateWalk(userId, id, request);
         return ResponseEntity.noContent().build();
     }
+
+    //진행중인 산책 조회
+    @GetMapping("/ongoing")
+    public ResponseEntity<WalkResponse> getOngoingWalk(@AuthenticationPrincipal Long userId){
+        return walkService.getOngoingWalk(userId).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
+    }
 }

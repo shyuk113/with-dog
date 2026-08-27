@@ -33,7 +33,8 @@ public enum ErrorCode {
     AI_SERVER_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "추천 서버 응답에 실패했습니다."),
 
     //walkHistory
-    WALKHISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산책 이력입니다.");
+    WALKHISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산책 이력입니다."),
+    WALK_ALREADY_ONGOING(HttpStatus.CONFLICT, "이미 산책 중 입니다.");
 
     private final HttpStatus status;
     private final String message;

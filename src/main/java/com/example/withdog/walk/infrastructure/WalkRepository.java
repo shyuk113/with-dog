@@ -12,4 +12,6 @@ public interface WalkRepository extends JpaRepository<Walk, Long> {
     Page<Walk> findByUserId(Pageable pageable, Long userId);
 
     Optional<Walk> findByIdAndUserId(Long id, Long userId);
+
+    Optional<Walk> findByUserIdAndEndedAtIsNull(Long userId);
 }
