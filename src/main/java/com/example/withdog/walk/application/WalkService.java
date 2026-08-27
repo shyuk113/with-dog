@@ -9,7 +9,9 @@ import com.example.withdog.user.infrastructure.UserRepository;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
 import com.example.withdog.walk.application.dto.UpdateWalkRequest;
 import com.example.withdog.walk.application.dto.WalkResponse;
+import com.example.withdog.walk.domain.RoutePoint;
 import com.example.withdog.walk.domain.Walk;
+import com.example.withdog.walk.infrastructure.RoutePointRepository;
 import com.example.withdog.walk.infrastructure.WalkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ public class WalkService {
     private final WalkRepository walkRepository;
     private final UserRepository userRepository;
     private final DogRepository dogRepository;
+    private final RoutePointRepository routePointRepository;
 
     //히스토리 목록 조회
     @Transactional(readOnly = true)
@@ -56,6 +59,8 @@ public class WalkService {
     @Transactional
     public void updateWalk(Long userId, Long id, UpdateWalkRequest request){
         Walk walk = walkRepository.findByIdAndUserId(id, userId).orElseThrow(()->new BusinessException(ErrorCode.WALKHISTORY_NOT_FOUND));
+        routePointRepository.saveAll(request.routePointRequest().stream()
+                .map(r-> RoutePoint.createRoutePoint(r.lat(), r.lon(), r.capturedAt(), walk)).toList());
         walk.end(LocalDateTime.now(), request.distanceKm());
     }
 }
