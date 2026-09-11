@@ -49,10 +49,11 @@ public class WalkService {
     //산책 시작
     @Transactional
     public WalkResponse createWalk(Long userId, CreateWalkRequest request){
+        // user row를 잠궈서 같은 유저의 동시 createWalk 호출을 직렬화 (진행중 산책 체크-후-생성 레이스 방지)
+        User user = userRepository.findByIdForUpdate(userId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         if(walkRepository.findByUserIdAndEndedAtIsNull(userId).isPresent()){
             throw new BusinessException(ErrorCode.WALK_ALREADY_ONGOING);
         }
-        User user = userRepository.findById(userId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Dog dog = dogRepository.findByUserIdAndId(userId, request.dogId()).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
         Walk walk = Walk.createWalk(user, dog, LocalDateTime.now());
         walkRepository.save(walk);
