@@ -12,6 +12,7 @@ import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,11 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = User.createUserLocal(request.name(), request.email(), encodedPassword, request.region());
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+        }
         return SignupResponse.from(user);
     }
 
