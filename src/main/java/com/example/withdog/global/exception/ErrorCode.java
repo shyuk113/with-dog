@@ -34,7 +34,13 @@ public enum ErrorCode {
 
     //walkHistory
     WALKHISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산책 이력입니다."),
-    WALK_ALREADY_ONGOING(HttpStatus.CONFLICT, "이미 산책 중 입니다.");
+    WALK_ALREADY_ONGOING(HttpStatus.CONFLICT, "이미 산책 중 입니다."),
+
+    //── Medication ──────────────────────────────────────────
+    MEDICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 복용 약 기록입니다."),
+    INVALID_IMAGE(HttpStatus.BAD_REQUEST, "이미지 파일이 필요합니다."),
+    IMAGE_STORAGE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 저장에 실패했습니다."),
+    OCR_SERVER_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "약 봉투 인식에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
