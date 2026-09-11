@@ -5,6 +5,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 src/main/resources/application.yml
+/uploads/
+/docs/study-notes/
 
 ### STS ###
 .apt_generated
