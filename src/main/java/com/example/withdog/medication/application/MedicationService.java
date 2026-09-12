@@ -9,7 +9,7 @@ import com.example.withdog.medication.domain.Medication;
 import com.example.withdog.medication.infrastructure.MedicationRepository;
 import com.example.withdog.medication.infrastructure.ocr.OcrClient;
 import com.example.withdog.medication.infrastructure.ocr.OcrResult;
-import com.example.withdog.medication.infrastructure.storage.ImageStorageService;
+import com.example.withdog.global.infrastructure.storage.ImageStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,7 @@ public class MedicationService {
             throw new BusinessException(ErrorCode.INVALID_IMAGE);
         }
 
-        String imageUrl = imageStorageService.store(image);
+        String imageUrl = imageStorageService.store(image, "medications");
         OcrResult ocrResult = ocrClient.extractMedicationInfo(imageBytes, image.getOriginalFilename());
 
         Medication medication = Medication.createFromScan(
