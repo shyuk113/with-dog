@@ -6,6 +6,9 @@ import com.example.withdog.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -25,11 +28,20 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    // 대댓글이 다는 원본 댓글 (최상위 댓글이면 null)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Comment> replies = new ArrayList<>();
+
     @Builder
-    private Comment(String content, User user, Post post) {
+    private Comment(String content, User user, Post post, Comment parent) {
         this.content = content;
         this.user = user;
         this.post = post;
+        this.parent = parent;
     }
 
     public static Comment createComment(String content, User user, Post post) {
@@ -38,6 +50,23 @@ public class Comment extends BaseEntity {
                 .user(user)
                 .post(post)
                 .build();
+    }
+
+    public static Comment createReply(String content, User user, Post post, Comment parent) {
+        return Comment.builder()
+                .content(content)
+                .user(user)
+                .post(post)
+                .parent(parent)
+                .build();
+    }
+
+    public boolean isReply() {
+        return parent != null;
+    }
+
+    public Long getParentId() {
+        return parent == null ? null : parent.getId();
     }
 
     public void updateComment(String content) {

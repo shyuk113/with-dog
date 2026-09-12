@@ -7,6 +7,7 @@ import com.example.withdog.comment.domain.Comment;
 import com.example.withdog.comment.infrastructure.CommentRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
+import com.example.withdog.notification.application.NotificationService;
 import com.example.withdog.post.domain.Post;
 import com.example.withdog.post.infrastructure.PostRepository;
 import com.example.withdog.user.domain.User;
@@ -24,6 +25,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     //댓글 조회
     @Transactional(readOnly = true)
@@ -32,14 +34,31 @@ public class CommentService {
         return comments.map(CommentResponse::from);
     }
 
-    //댓글 생성
+    //댓글/대댓글 생성
     @Transactional
     public CommentResponse createComment(CreateCommentRequest request, Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         Post post = postRepository.findById(postId).orElseThrow(()-> new BusinessException(ErrorCode.POST_NOT_FOUND));
-        Comment comment = Comment.createComment(request.content(), user, post);
-        commentRepository.save(comment);
-        return CommentResponse.from(comment);
+
+        if (request.parentId() == null) {
+            Comment comment = Comment.createComment(request.content(), user, post);
+            commentRepository.save(comment);
+            //댓글 작성 -> 게시물 작성자에게 알림
+            notificationService.notifyNewComment(post, comment);
+            return CommentResponse.from(comment);
+        }
+
+        Comment parent = commentRepository.findByIdAndPostId(request.parentId(), postId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.COMMENT_NOT_FOUND));
+        if (parent.isReply()) {
+            throw new BusinessException(ErrorCode.REPLY_DEPTH_EXCEEDED);
+        }
+
+        Comment reply = Comment.createReply(request.content(), user, post, parent);
+        commentRepository.save(reply);
+        //대댓글 작성 -> 게시물 작성자가 아니라 원본 댓글 작성자에게 알림
+        notificationService.notifyNewReply(parent, reply);
+        return CommentResponse.from(reply);
     }
 
     //댓글 수정
@@ -72,6 +91,7 @@ public class CommentService {
             throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
         }
 
+        notificationService.deleteNotificationsForComment(comment);
         commentRepository.delete(comment);
     }
 
