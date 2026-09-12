@@ -9,6 +9,7 @@ import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
 import com.example.withdog.walk.application.dto.UpdateWalkRequest;
+import com.example.withdog.walk.application.dto.WalkDetailResponse;
 import com.example.withdog.walk.application.dto.WalkResponse;
 import com.example.withdog.walk.domain.RoutePoint;
 import com.example.withdog.walk.domain.Walk;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,12 +42,12 @@ public class WalkService {
         return walkHistories.map(WalkResponse::from);
     }
 
-    //히스토리 상세 조회
+    //히스토리 상세 조회 (소요시간, 시작/종료 시간, 거리, 코스, 강아지 프로필)
     @Transactional(readOnly = true)
-    public WalkResponse getWalkHistory(Long id, Long userId){
+    public WalkDetailResponse getWalkHistory(Long id, Long userId){
         Walk walkHistory = walkRepository.findByIdAndUserId(id, userId).orElseThrow(()->
                 new BusinessException(ErrorCode.WALKHISTORY_NOT_FOUND));
-        return WalkResponse.from(walkHistory);
+        return WalkDetailResponse.of(walkHistory, routePointRepository.findByWalkId(walkHistory.getId()));
     }
 
     //산책 시작
@@ -62,16 +64,18 @@ public class WalkService {
         return WalkResponse.from(walk);
     }
 
-    //산책 종료 및 저장
+    //산책 종료 및 저장 -> 종료 직후 화면에 바로 띄울 상세 정보 반환
     @Transactional
-    public void updateWalk(Long userId, Long id, UpdateWalkRequest request){
+    public WalkDetailResponse updateWalk(Long userId, Long id, UpdateWalkRequest request){
         Walk walk = walkRepository.findByIdAndUserId(id, userId).orElseThrow(()->new BusinessException(ErrorCode.WALKHISTORY_NOT_FOUND));
-        routePointRepository.saveAll(request.routePointRequest().stream()
+        List<RoutePoint> routePoints = routePointRepository.saveAll(request.routePointRequest().stream()
                 .map(r-> RoutePoint.createRoutePoint(r.lat(), r.lon(), r.capturedAt(), walk)).toList());
         walk.end(LocalDateTime.now(), request.distanceKm());
 
         //산책 종료로 이번 주 산책 관련 미션 달성 여부가 바뀔 수 있어 재평가
         missionService.evaluate(userId);
+
+        return WalkDetailResponse.of(walk, routePoints);
     }
 
     //진행중인 산책이 있는지 확인

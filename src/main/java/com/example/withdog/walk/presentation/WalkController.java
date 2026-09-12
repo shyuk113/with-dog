@@ -3,6 +3,7 @@ package com.example.withdog.walk.presentation;
 import com.example.withdog.walk.application.WalkService;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
 import com.example.withdog.walk.application.dto.UpdateWalkRequest;
+import com.example.withdog.walk.application.dto.WalkDetailResponse;
 import com.example.withdog.walk.application.dto.WalkResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class WalkController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WalkResponse> getWalkHistory(@PathVariable Long id, @AuthenticationPrincipal Long userId){
+    public ResponseEntity<WalkDetailResponse> getWalkHistory(@PathVariable Long id, @AuthenticationPrincipal Long userId){
         return ResponseEntity.ok(walkService.getWalkHistory(id,userId));
     }
 
@@ -37,9 +38,8 @@ public class WalkController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> endWalk(@PathVariable Long id, @Valid @RequestBody UpdateWalkRequest request, @AuthenticationPrincipal Long userId){
-        walkService.updateWalk(userId, id, request);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<WalkDetailResponse> endWalk(@PathVariable Long id, @Valid @RequestBody UpdateWalkRequest request, @AuthenticationPrincipal Long userId){
+        return ResponseEntity.ok(walkService.updateWalk(userId, id, request));
     }
 
     //진행중인 산책 조회
