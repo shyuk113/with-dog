@@ -4,6 +4,7 @@ import com.example.withdog.dog.domain.Dog;
 import com.example.withdog.dog.infrastructure.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
+import com.example.withdog.mission.application.MissionService;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
@@ -30,6 +31,7 @@ public class WalkService {
     private final UserRepository userRepository;
     private final DogRepository dogRepository;
     private final RoutePointRepository routePointRepository;
+    private final MissionService missionService;
 
     //히스토리 목록 조회
     @Transactional(readOnly = true)
@@ -67,6 +69,9 @@ public class WalkService {
         routePointRepository.saveAll(request.routePointRequest().stream()
                 .map(r-> RoutePoint.createRoutePoint(r.lat(), r.lon(), r.capturedAt(), walk)).toList());
         walk.end(LocalDateTime.now(), request.distanceKm());
+
+        //산책 종료로 이번 주 산책 관련 미션 달성 여부가 바뀔 수 있어 재평가
+        missionService.evaluate(userId);
     }
 
     //진행중인 산책이 있는지 확인

@@ -42,6 +42,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    private int level = 1;
+
+    @Column(nullable = false)
+    private int experience = 0;
+
     @Builder
     private User(String nickname, String name, String email, String password, String region, Provider provider, String providerId, Role role) {
         this.nickname = nickname;
@@ -83,5 +89,14 @@ public class User extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+    }
+
+    //경험치 획득 및 레벨업 처리 (레벨 N에서 다음 레벨까지 필요한 경험치는 N*100)
+    public void gainExp(int amount){
+        this.experience += amount;
+        while (this.experience >= level * 100){
+            this.experience -= level * 100;
+            this.level++;
+        }
     }
 }
