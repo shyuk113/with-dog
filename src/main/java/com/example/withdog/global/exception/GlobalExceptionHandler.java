@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -33,6 +34,18 @@ public class GlobalExceptionHandler {
                 .message(defaultMessage)
                 .build();
         return ResponseEntity.badRequest().body(response);
+    }
+
+    // ── 매핑된 핸들러/정적 리소스가 없는 요청 (404) ───────
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.name())
+                .code("RESOURCE_NOT_FOUND")
+                .message("요청하신 경로를 찾을 수 없습니다.")
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     // ── 서버 내부 오류 (500) ───────────────────────────

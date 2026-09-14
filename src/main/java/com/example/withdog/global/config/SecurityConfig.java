@@ -27,7 +27,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
-                        "/api/auth/signup", //인증없이 접근 가능한 주소
+                        "/", //인증없이 접근 가능한 주소
+                        "/api/auth/signup",
                         "/api/auth/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
