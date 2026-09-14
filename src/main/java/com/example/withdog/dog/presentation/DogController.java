@@ -4,6 +4,7 @@ import com.example.withdog.dog.application.DogService;
 import com.example.withdog.dog.application.dto.CreateDogRequest;
 import com.example.withdog.dog.application.dto.DogResponse;
 import com.example.withdog.dog.application.dto.UpdateDogRequest;
+import com.example.withdog.dog.application.dto.UpdateHealthConditionsRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,13 @@ public class DogController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateDog(@PathVariable Long id, @Valid @RequestBody UpdateDogRequest request, @AuthenticationPrincipal Long userId) {
         dogService.updateDog(id, request,userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    //강아지 건강상태(지병) 수정
+    @PatchMapping("/{id}/health-conditions")
+    public ResponseEntity<Void> updateHealthConditions(@PathVariable Long id, @RequestBody UpdateHealthConditionsRequest request, @AuthenticationPrincipal Long userId) {
+        dogService.updateHealthConditions(id, request, userId);
         return ResponseEntity.noContent().build();
     }
 

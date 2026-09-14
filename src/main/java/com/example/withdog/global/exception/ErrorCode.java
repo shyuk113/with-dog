@@ -51,7 +51,11 @@ public enum ErrorCode {
     //── Mission ──────────────────────────────────────────
     MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 미션입니다."),
     MISSION_NOT_ACHIEVED(HttpStatus.CONFLICT, "아직 달성하지 않은 미션입니다."),
-    MISSION_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 보상을 수령한 미션입니다.");
+    MISSION_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 보상을 수령한 미션입니다."),
+
+    //── Diet ──────────────────────────────────────────
+    FOOD_ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사료/간식 기록입니다."),
+    FOOD_OCR_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "사료/간식 상품 인식에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;

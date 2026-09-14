@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,6 +30,12 @@ public class Dog extends BaseEntity {
     private LocalDate birthDate;
 
     private Double weight;
+
+    // 급여량 추천 등에 활용되는 지병/건강상태 (예: 비만, 저체중, 신장질환)
+    @ElementCollection
+    @CollectionTable(name = "dog_health_condition", joinColumns = @JoinColumn(name = "dog_id"))
+    @Column(name = "condition")
+    private List<String> healthConditions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -61,5 +69,9 @@ public class Dog extends BaseEntity {
         this.breed = breed;
         this.birthDate = birthDate;
         this.weight = weight;
+    }
+
+    public void updateHealthConditions(List<String> healthConditions) {
+        this.healthConditions = new ArrayList<>(healthConditions);
     }
 }

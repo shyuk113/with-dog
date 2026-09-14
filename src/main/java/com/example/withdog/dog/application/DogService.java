@@ -3,6 +3,7 @@ package com.example.withdog.dog.application;
 import com.example.withdog.dog.application.dto.CreateDogRequest;
 import com.example.withdog.dog.application.dto.DogResponse;
 import com.example.withdog.dog.application.dto.UpdateDogRequest;
+import com.example.withdog.dog.application.dto.UpdateHealthConditionsRequest;
 import com.example.withdog.dog.domain.Dog;
 import com.example.withdog.dog.infrastructure.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
@@ -52,6 +53,13 @@ public class DogService {
     public void updateDog(Long id, UpdateDogRequest request, Long userId){
         Dog dog =  dogRepository.findByUserIdAndId(userId, id).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
         dog.updateDogProfile(request.name(), request.breed(), request.birthDate(), request.weight());
+    }
+
+    //강아지 건강상태(지병) 수정 -> 간식/사료 급여량 추천에 반영됨
+    @Transactional
+    public void updateHealthConditions(Long id, UpdateHealthConditionsRequest request, Long userId){
+        Dog dog = dogRepository.findByUserIdAndId(userId, id).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
+        dog.updateHealthConditions(request.healthConditions());
     }
 
     //강아지 정보 삭제
