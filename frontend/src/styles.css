@@ -1,0 +1,266 @@
+:root {
+  color-scheme: light;
+  --bg: #f6f5f2;
+  --card: #ffffff;
+  --border: #e4e0d8;
+  --text: #2b2a27;
+  --muted: #8a8578;
+  --accent: #e08a3e;
+  --accent-dark: #c96f27;
+  --danger: #c85c5c;
+  --success: #5c9c6e;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Pretendard', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#root {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+header.app-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header.app-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+nav.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+
+nav.tabs button {
+  border: none;
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+nav.tabs button.active {
+  background: var(--accent);
+  color: white;
+}
+
+main {
+  padding: 16px;
+  padding-bottom: 60px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.card + .card {
+  margin-top: 12px;
+}
+
+h2 {
+  font-size: 16px;
+  margin: 0 0 12px;
+}
+
+h3 {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  background: white;
+  color: var(--text);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+button.btn {
+  border: none;
+  background: var(--accent);
+  color: white;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+button.btn:hover {
+  background: var(--accent-dark);
+}
+
+button.btn:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+button.btn.secondary {
+  background: white;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button.btn.danger {
+  background: var(--danger);
+}
+
+button.btn.small {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.row.wrap {
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.success {
+  color: var(--success);
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.list-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.badge {
+  display: inline-block;
+  background: #f0e6d8;
+  color: var(--accent-dark);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+.badge.done {
+  background: #dceee0;
+  color: var(--success);
+}
+
+.route-svg {
+  width: 100%;
+  height: 180px;
+  background: #f0efe9;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.top-links {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.top-links a,
+.top-links span {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.mission-bar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.mission-bar-fill {
+  height: 100%;
+  background: var(--accent);
+}
+
+.comment {
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.comment.reply {
+  margin-left: 20px;
+  border-top: none;
+  padding-top: 4px;
+}
+
+.spinner {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+img.thumb {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
