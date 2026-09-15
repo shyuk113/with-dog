@@ -8,11 +8,13 @@ import com.example.withdog.dog.domain.Dog;
 import com.example.withdog.dog.infrastructure.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
+import com.example.withdog.global.infrastructure.storage.ImageStorageService;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,8 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DogService {
 
+    private static final String IMAGE_SUB_DIRECTORY = "dogs";
+
     private final DogRepository dogRepository;
     private final UserRepository userRepository;
+    private final ImageStorageService imageStorageService;
 
     //강아지 정보 생성
     @Transactional
@@ -60,6 +65,15 @@ public class DogService {
     public void updateHealthConditions(Long id, UpdateHealthConditionsRequest request, Long userId){
         Dog dog = dogRepository.findByUserIdAndId(userId, id).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
         dog.updateHealthConditions(request.healthConditions());
+    }
+
+    //강아지 프로필 이미지 업로드
+    @Transactional
+    public DogResponse updateProfileImage(Long id, Long userId, MultipartFile image){
+        Dog dog = dogRepository.findByUserIdAndId(userId, id).orElseThrow(()-> new BusinessException(ErrorCode.DOG_NOT_FOUND));
+        String imageUrl = imageStorageService.store(image, IMAGE_SUB_DIRECTORY);
+        dog.updateProfileImage(imageUrl);
+        return DogResponse.from(dog);
     }
 
     //강아지 정보 삭제

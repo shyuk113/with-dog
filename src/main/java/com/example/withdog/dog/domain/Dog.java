@@ -31,6 +31,8 @@ public class Dog extends BaseEntity {
 
     private Double weight;
 
+    private String imageUrl;
+
     // 급여량 추천 등에 활용되는 지병/건강상태 (예: 비만, 저체중, 신장질환)
     @ElementCollection
     @CollectionTable(name = "dog_health_condition", joinColumns = @JoinColumn(name = "dog_id"))
@@ -73,5 +75,9 @@ public class Dog extends BaseEntity {
 
     public void updateHealthConditions(List<String> healthConditions) {
         this.healthConditions = new ArrayList<>(healthConditions);
+    }
+
+    public void updateProfileImage(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

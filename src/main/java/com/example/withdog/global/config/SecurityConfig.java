@@ -36,7 +36,9 @@ public class SecurityConfig {
                         "/", //인증없이 접근 가능한 주소
                         "/api/auth/signup",
                         "/api/auth/login",
-                        "/api/auth/refresh").permitAll()
+                        "/api/auth/refresh",
+                        "/uploads/**", // 업로드된 이미지 - <img> 태그는 Authorization 헤더를 못 실어보내므로 공개
+                        "/images/**").permitAll()  // 기본 프로필 이미지 등 정적 리소스
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(redisTokenService, jwtProvider), UsernamePasswordAuthenticationFilter.class);
