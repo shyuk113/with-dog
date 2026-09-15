@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -50,6 +51,12 @@ public class DogController {
     public ResponseEntity<Void> updateHealthConditions(@PathVariable Long id, @RequestBody UpdateHealthConditionsRequest request, @AuthenticationPrincipal Long userId) {
         dogService.updateHealthConditions(id, request, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    //강아지 프로필 이미지 업로드
+    @PostMapping(value = "/{id}/image", consumes = "multipart/form-data")
+    public ResponseEntity<DogResponse> updateProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image, @AuthenticationPrincipal Long userId) {
+        return ResponseEntity.ok(dogService.updateProfileImage(id, userId, image));
     }
 
     //강아지 프로필 삭제

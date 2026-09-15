@@ -39,6 +39,8 @@ public class User extends BaseEntity {
 
     private String address;
 
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -89,6 +91,10 @@ public class User extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+    }
+
+    public void updateProfileImage(String imageUrl){
+        this.imageUrl = imageUrl;
     }
 
     //경험치 획득 및 레벨업 처리 (레벨 N에서 다음 레벨까지 필요한 경험치는 N*100)
