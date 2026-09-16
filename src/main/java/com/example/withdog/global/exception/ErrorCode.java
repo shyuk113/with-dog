@@ -34,6 +34,7 @@ public enum ErrorCode {
 
     // AI
     AI_SERVER_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "추천 서버 응답에 실패했습니다."),
+    LOCATION_REQUIRED(HttpStatus.BAD_REQUEST, "등록된 위치 정보가 없습니다. 위치를 직접 입력하거나 프로필에서 위치를 설정해주세요."),
 
     //walkHistory
     WALKHISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산책 이력입니다."),

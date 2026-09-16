@@ -43,6 +43,9 @@ public class RecommendService {
             if(cached.isPresent()){
                 return cached.get();
             }
+            if(user.getLatitude() == null || user.getLongitude() == null){
+                throw new BusinessException(ErrorCode.LOCATION_REQUIRED);
+            }
         }
 
         double resolvedlat = useRegisteredLocation ? user.getLatitude() : lat;
