@@ -48,7 +48,7 @@ public class DogController {
 
     //강아지 건강상태(지병) 수정
     @PatchMapping("/{id}/health-conditions")
-    public ResponseEntity<Void> updateHealthConditions(@PathVariable Long id, @RequestBody UpdateHealthConditionsRequest request, @AuthenticationPrincipal Long userId) {
+    public ResponseEntity<Void> updateHealthConditions(@PathVariable Long id, @Valid @RequestBody UpdateHealthConditionsRequest request, @AuthenticationPrincipal Long userId) {
         dogService.updateHealthConditions(id, request, userId);
         return ResponseEntity.noContent().build();
     }

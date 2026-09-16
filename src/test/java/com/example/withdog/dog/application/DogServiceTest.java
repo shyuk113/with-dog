@@ -1,6 +1,7 @@
 package com.example.withdog.dog.application;
 
 import com.example.withdog.dog.application.dto.DogResponse;
+import com.example.withdog.dog.application.dto.UpdateHealthConditionsRequest;
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
 import com.example.withdog.dog.infrastructure.DogRepository;
@@ -9,6 +10,8 @@ import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +77,13 @@ class DogServiceTest {
         assertThatThrownBy(() -> dogService.updateProfileImage(dogId, otherUserId, image))
                 .isInstanceOf(BusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.DOG_NOT_FOUND);
+    }
+
+    @Test
+    void 강아지의_건강상태를_수정할_수_있다() {
+        dogService.updateHealthConditions(dogId, new UpdateHealthConditionsRequest(List.of("관절염", "비만")), userId);
+
+        DogResponse response = dogService.getDog(dogId, userId);
+        assertThat(response.healthConditions()).containsExactly("관절염", "비만");
     }
 }
