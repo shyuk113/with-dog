@@ -5,6 +5,7 @@ import com.example.withdog.auth.application.dto.LoginRequest;
 import com.example.withdog.auth.application.dto.SignupRequest;
 import com.example.withdog.auth.application.dto.SignupResponse;
 import com.example.withdog.auth.application.dto.TokenResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,13 +22,13 @@ public class AuthController {
 
     //회원가입
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest request){
+    public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request){
         return ResponseEntity.ok(authService.signup(request));
     }
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request){
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request){
         return ResponseEntity.ok(authService.login(request));
     }
 
