@@ -1,11 +1,14 @@
 package com.example.withdog.post.application;
 
+import com.example.withdog.comment.application.CommentService;
+import com.example.withdog.comment.application.dto.CreateCommentRequest;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.post.application.dto.CreatePostRequest;
 import com.example.withdog.post.application.dto.PostDetailResponse;
 import com.example.withdog.post.application.dto.PostRouteRequest;
 import com.example.withdog.post.application.dto.PostSummaryResponse;
+import com.example.withdog.post.infrastructure.PostRepository;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +36,12 @@ class PostServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private PostRepository postRepository;
 
     private Long authorId;
     private Long otherUserId;
@@ -141,5 +150,20 @@ class PostServiceTest {
         assertThat(likedPosts.getContent()).hasSize(1);
         assertThat(likedPosts.getContent().get(0).id()).isEqualTo(liked.id());
         assertThat(likedPosts.getContent()).noneMatch(p -> p.id().equals(notLiked.id()));
+    }
+
+    @Test
+    void 댓글_대댓글_좋아요_알림이_달린_게시글도_삭제할_수_있다() {
+        PostDetailResponse created = postService.createPost(requestWithRoute(), authorId);
+
+        // 댓글, 대댓글 작성 -> 게시물 작성자/원본 댓글 작성자에게 알림이 생성됨
+        var comment = commentService.createComment(new CreateCommentRequest("좋은 코스네요", null), created.id(), otherUserId);
+        commentService.createComment(new CreateCommentRequest("저도 가보고 싶어요", comment.id()), created.id(), authorId);
+        // 좋아요도 하나 추가
+        postService.likePost(created.id(), otherUserId);
+
+        postService.deletePost(created.id(), authorId);
+
+        assertThat(postRepository.findById(created.id())).isEmpty();
     }
 }
