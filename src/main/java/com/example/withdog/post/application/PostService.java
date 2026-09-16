@@ -1,8 +1,11 @@
 package com.example.withdog.post.application;
 
+import com.example.withdog.comment.domain.Comment;
+import com.example.withdog.comment.infrastructure.CommentRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.global.infrastructure.storage.ImageStorageService;
+import com.example.withdog.notification.application.NotificationService;
 import com.example.withdog.post.application.dto.CreatePostRequest;
 import com.example.withdog.post.application.dto.PostDetailResponse;
 import com.example.withdog.post.application.dto.PostRouteRequest;
@@ -22,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -32,6 +37,8 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostLikeRepository postLikeRepository;
     private final ImageStorageService imageStorageService;
+    private final CommentRepository commentRepository;
+    private final NotificationService notificationService;
 
     //게시물 작성 (산책 코스 공유는 선택사항)
     @Transactional
@@ -84,7 +91,7 @@ public class PostService {
         return PostDetailResponse.of(post, likeCount, likedByMe);
     }
 
-    //게시물 삭제
+    //게시물 삭제 -> 댓글/좋아요/알림이 post_id를 참조(FK not-null)하고 있으므로, 게시물을 지우기 전에 먼저 정리해야 한다
     @Transactional
     public void deletePost(Long postId, Long userId) {
 
@@ -93,6 +100,12 @@ public class PostService {
         if(!post.getAuthor().getId().equals(userId)) {
             throw new BusinessException(ErrorCode.POST_FORBIDDEN);
         }
+
+        List<Comment> topLevelComments = commentRepository.findByPostIdAndParentIsNull(postId);
+        topLevelComments.forEach(notificationService::deleteNotificationsForComment);
+
+        postLikeRepository.deleteByPostId(postId);
+        commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
     }
 
