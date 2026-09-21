@@ -153,6 +153,30 @@ class PostServiceTest {
     }
 
     @Test
+    void 게시물_목록_조회시_게시물별_좋아요수와_내_좋아요여부가_정확하다() {
+        PostDetailResponse twoLikes = postService.createPost(requestWithRoute(), authorId);
+        PostDetailResponse oneLike = postService.createPost(new CreatePostRequest("한 명만 좋아요", "내용", null), authorId);
+        PostDetailResponse noLike = postService.createPost(new CreatePostRequest("좋아요 없음", "내용", null), authorId);
+
+        postService.likePost(twoLikes.id(), otherUserId);
+        postService.likePost(twoLikes.id(), authorId);
+        postService.likePost(oneLike.id(), authorId);
+
+        Page<PostSummaryResponse> page = postService.getPosts(null, PageRequest.of(0, 10), otherUserId);
+
+        PostSummaryResponse a = page.getContent().stream().filter(p -> p.id().equals(twoLikes.id())).findFirst().orElseThrow();
+        PostSummaryResponse b = page.getContent().stream().filter(p -> p.id().equals(oneLike.id())).findFirst().orElseThrow();
+        PostSummaryResponse c = page.getContent().stream().filter(p -> p.id().equals(noLike.id())).findFirst().orElseThrow();
+
+        assertThat(a.likeCount()).isEqualTo(2);
+        assertThat(a.likedByMe()).isTrue();
+        assertThat(b.likeCount()).isEqualTo(1);
+        assertThat(b.likedByMe()).isFalse();
+        assertThat(c.likeCount()).isEqualTo(0);
+        assertThat(c.likedByMe()).isFalse();
+    }
+
+    @Test
     void 댓글_대댓글_좋아요_알림이_달린_게시글도_삭제할_수_있다() {
         PostDetailResponse created = postService.createPost(requestWithRoute(), authorId);
 
