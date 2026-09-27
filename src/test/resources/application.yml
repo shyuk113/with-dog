@@ -1,0 +1,35 @@
+# 테스트 전용 설정 (src/main/resources/application.yml은 gitignore 대상이라 CI에는 존재하지 않음)
+# 외부 연동(AI/OCR/Tmap)은 local 프로필의 Mock 구현체를 사용하고, DB는 H2 인메모리, Redis는 CI 서비스 컨테이너를 사용한다
+spring:
+  profiles:
+    active: local
+  application:
+    name: withdog
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+ai:
+  server:
+    base-url: http://localhost:8000
+
+weather:
+  base-url: https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+  service-key: ${WEATHER_SERVICE_KEY:}
+
+route:
+  base-url: https://apis.openapi.sk.com
+  app-key: ${TMAP_APP_KEY:}
+
+jwt:
+  secret: test-only-jwt-secret-key-must-be-at-least-32-bytes-long
+  access-token-expiration: 3600000
+  refresh-token-expiration: 1209600000
+
+file:
+  upload-dir: ./build/test-uploads

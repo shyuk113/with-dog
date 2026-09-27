@@ -1,0 +1,33 @@
+# 운영(Docker) 실행용 설정. 민감 값은 모두 환경변수로 주입한다.
+# 실행 예: docker run -e SPRING_PROFILES_ACTIVE=prod -e JWT_SECRET=... ghcr.io/<owner>/with-dog
+spring:
+  application:
+    name: withdog
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+ai:
+  server:
+    base-url: ${AI_SERVER_BASE_URL:http://localhost:8000}
+
+weather:
+  base-url: https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0
+  service-key: ${WEATHER_SERVICE_KEY:}
+
+route:
+  base-url: https://apis.openapi.sk.com
+  app-key: ${TMAP_APP_KEY:}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: 3600000
+  refresh-token-expiration: 1209600000
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:/app/uploads}
