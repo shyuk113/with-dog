@@ -16,6 +16,8 @@ import com.example.withdog.post.domain.PostLike;
 import com.example.withdog.post.domain.PostRoutePoint;
 import com.example.withdog.post.infrastructure.PostLikeRepository;
 import com.example.withdog.post.infrastructure.PostRepository;
+import com.example.withdog.region.application.RegionService;
+import com.example.withdog.region.domain.Region;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,6 +46,7 @@ public class PostService {
     private final ImageStorageService imageStorageService;
     private final CommentRepository commentRepository;
     private final NotificationService notificationService;
+    private final RegionService regionService;
 
     //게시물 작성 (산책 코스 공유는 선택사항)
     @Transactional
@@ -55,8 +59,21 @@ public class PostService {
                         request.route().courseName(), request.route().distanceKm(), request.route().durationMinutes(),
                         request.route().route().stream().map(r -> new PostRoutePoint(r.lat(), r.lon())).toList());
 
+        post.assignRegion(resolveRegionCode(request, author));
         postRepository.save(post);
         return PostDetailResponse.of(post, 0, false);
+    }
+
+    //산책 코스가 있으면 코스 시작점의 동네, 없으면 작성자의 등록 동네를 게시글 지역으로 사용
+    private String resolveRegionCode(CreatePostRequest request, User author) {
+        if (request.route() != null && request.route().route() != null && !request.route().route().isEmpty()) {
+            PostRouteRequest.RouteStepRequest start = request.route().route().get(0);
+            Optional<Region> routeRegion = regionService.resolve(start.lat(), start.lon());
+            if (routeRegion.isPresent()) {
+                return routeRegion.get().code();
+            }
+        }
+        return author.getRegionCode();
     }
 
     //게시물 이미지 첨부 (핸드폰에 저장된 이미지 업로드)

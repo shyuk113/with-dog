@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(indexes = @Index(name = "idx_post_region_code_id", columnList = "region_code, id"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Post extends BaseEntity {
@@ -31,6 +32,10 @@ public class Post extends BaseEntity {
     private User author;
 
     private String imageUrl;
+
+    // 작성 시점의 시군구 코드 스냅샷 (작성자가 이사해도 기존 글은 원래 동네 피드에 남는다)
+    @Column(name = "region_code", length = 5)
+    private String regionCode;
 
     // 산책 코스 공유 — 작성 시점의 코스 스냅샷 (추천받은 경로 또는 실제 산책 기록 중 하나를 선택해 첨부)
     private String courseName;
@@ -85,6 +90,10 @@ public class Post extends BaseEntity {
     public void updatePost(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void assignRegion(String regionCode) {
+        this.regionCode = regionCode;
     }
 
     public void attachImage(String imageUrl) {

@@ -9,6 +9,7 @@ import com.example.withdog.post.application.dto.PostDetailResponse;
 import com.example.withdog.post.application.dto.PostRouteRequest;
 import com.example.withdog.post.application.dto.PostSummaryResponse;
 import com.example.withdog.post.infrastructure.PostRepository;
+import com.example.withdog.region.domain.Region;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,6 +151,34 @@ class PostServiceTest {
         assertThat(likedPosts.getContent()).hasSize(1);
         assertThat(likedPosts.getContent().get(0).id()).isEqualTo(liked.id());
         assertThat(likedPosts.getContent()).noneMatch(p -> p.id().equals(notLiked.id()));
+    }
+
+    @Test
+    void 산책코스가_있는_게시글은_코스_시작점의_시군구로_지역이_정해진다() {
+        // 작성자는 부산 해운대구로 등록되어 있어도, 코스 시작점(서울 37.5665, 126.9780)이 기준 -> MockRegionClient: 11440 마포구
+        User author = userRepository.findById(authorId).orElseThrow();
+        author.assignRegion(new Region("26350", "부산광역시 해운대구"));
+
+        PostDetailResponse created = postService.createPost(requestWithRoute(), authorId);
+
+        assertThat(postRepository.findById(created.id()).orElseThrow().getRegionCode()).isEqualTo("11440");
+    }
+
+    @Test
+    void 코스가_없는_게시글은_작성자의_등록_지역을_사용한다() {
+        User author = userRepository.findById(authorId).orElseThrow();
+        author.assignRegion(new Region("26350", "부산광역시 해운대구"));
+
+        PostDetailResponse created = postService.createPost(new CreatePostRequest("일반 글", "내용", null), authorId);
+
+        assertThat(postRepository.findById(created.id()).orElseThrow().getRegionCode()).isEqualTo("26350");
+    }
+
+    @Test
+    void 작성자의_지역이_정해지지_않았으면_코스없는_게시글의_지역도_비어있다() {
+        PostDetailResponse created = postService.createPost(new CreatePostRequest("일반 글", "내용", null), authorId);
+
+        assertThat(postRepository.findById(created.id()).orElseThrow().getRegionCode()).isNull();
     }
 
     @Test
