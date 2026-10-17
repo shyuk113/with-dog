@@ -11,6 +11,15 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        # 브로커 장애 시 요청 스레드가 기본값(60초)만큼 막히지 않도록 제한
+        max.block.ms: 3000
+    consumer:
+      auto-offset-reset: earliest
 
 ai:
   server:
@@ -35,3 +44,8 @@ jwt:
 
 file:
   upload-dir: ${FILE_UPLOAD_DIR:/app/uploads}
+
+# 게시글 이벤트 전달 방식: direct(프로세스 내 즉시 반영) | kafka
+feed:
+  event:
+    transport: ${FEED_EVENT_TRANSPORT:kafka}

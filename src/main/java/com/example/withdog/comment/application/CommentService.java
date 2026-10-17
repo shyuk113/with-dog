@@ -9,10 +9,13 @@ import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.notification.application.NotificationService;
 import com.example.withdog.post.domain.Post;
+import com.example.withdog.post.domain.event.EngagementType;
+import com.example.withdog.post.domain.event.PostEngagementEvent;
 import com.example.withdog.post.infrastructure.PostRepository;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,7 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     //댓글 조회
     @Transactional(readOnly = true)
@@ -45,6 +49,7 @@ public class CommentService {
             commentRepository.save(comment);
             //댓글 작성 -> 게시물 작성자에게 알림
             notificationService.notifyNewComment(post, comment);
+            eventPublisher.publishEvent(PostEngagementEvent.of(postId, post.getRegionCode(), userId, EngagementType.COMMENTED));
             return CommentResponse.from(comment);
         }
 
@@ -58,6 +63,7 @@ public class CommentService {
         commentRepository.save(reply);
         //대댓글 작성 -> 게시물 작성자가 아니라 원본 댓글 작성자에게 알림
         notificationService.notifyNewReply(parent, reply);
+        eventPublisher.publishEvent(PostEngagementEvent.of(postId, post.getRegionCode(), userId, EngagementType.COMMENTED));
         return CommentResponse.from(reply);
     }
 
@@ -91,8 +97,12 @@ public class CommentService {
             throw new BusinessException(ErrorCode.COMMENT_FORBIDDEN);
         }
 
+        //최상위 댓글을 지우면 대댓글도 함께 삭제(cascade)되므로 그 개수까지 반영
+        int removedCount = 1 + comment.getReplies().size();
+        String regionCode = comment.getPost().getRegionCode();
         notificationService.deleteNotificationsForComment(comment);
         commentRepository.delete(comment);
+        eventPublisher.publishEvent(new PostEngagementEvent(postId, regionCode, userId, EngagementType.COMMENT_DELETED, removedCount));
     }
 
 
