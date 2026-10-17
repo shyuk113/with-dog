@@ -3,6 +3,7 @@ package com.example.withdog.user.application;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.global.infrastructure.storage.ImageStorageService;
+import com.example.withdog.region.application.RegionService;
 import com.example.withdog.user.application.dto.UpdateUserProfileRequest;
 import com.example.withdog.user.application.dto.UserProfileResponse;
 import com.example.withdog.user.application.dto.UserPublicResponse;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ImageStorageService imageStorageService;
+    private final RegionService regionService;
 
     //유저 정보 상세 조회
     @Transactional(readOnly = true)
@@ -43,6 +45,9 @@ public class UserService {
         }
         User user = userRepository.findById(targetId).orElseThrow(()-> new BusinessException(ErrorCode.USER_NOT_FOUND));
         user.updateUserProfile(request.nickname(), request.region(), request.latitude(), request.longitude(), request.address());
+        //지역 피드 키로 쓰기 위해 자유 입력 region 대신 좌표 기준 시군구 코드로 정규화
+        regionService.resolve(request.latitude(), request.longitude())
+                .ifPresentOrElse(user::assignRegion, user::clearRegionCode);
     }
 
     //유저 프로필 이미지 업로드 (본인만 가능)

@@ -1,6 +1,7 @@
 package com.example.withdog.user.domain;
 
 import com.example.withdog.global.BaseEntity;
+import com.example.withdog.region.domain.Region;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,6 +27,10 @@ public class User extends BaseEntity {
     private String password;
 
     private String region;
+
+    //시군구 행정구역 코드 (좌표로부터 정규화, 좌표가 없거나 변환 실패 시 null)
+    @Column(name = "region_code", length = 5)
+    private String regionCode;
 
     @Enumerated(EnumType.STRING)
     private Provider provider;
@@ -91,6 +96,17 @@ public class User extends BaseEntity {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
+    }
+
+    //정규화된 시군구로 지역 정보를 덮어쓴다 (표시용 region도 표준 명칭으로 통일)
+    public void assignRegion(Region region){
+        this.regionCode = region.code();
+        this.region = region.name();
+    }
+
+    //좌표가 바뀌었는데 지역을 확인할 수 없으면 이전 좌표 기준 코드가 남지 않도록 비운다
+    public void clearRegionCode(){
+        this.regionCode = null;
     }
 
     public void updateProfileImage(String imageUrl){

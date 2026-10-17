@@ -24,6 +24,10 @@ route:
   base-url: https://apis.openapi.sk.com
   app-key: ${TMAP_APP_KEY:}
 
+region:
+  base-url: https://dapi.kakao.com
+  api-key: ${KAKAO_REST_API_KEY:}
+
 jwt:
   secret: ${JWT_SECRET}
   access-token-expiration: 3600000

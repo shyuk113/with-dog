@@ -3,6 +3,7 @@ package com.example.withdog.user.application;
 import com.example.withdog.global.constant.DefaultImages;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
+import com.example.withdog.user.application.dto.UpdateUserProfileRequest;
 import com.example.withdog.user.application.dto.UserProfileResponse;
 import com.example.withdog.user.application.dto.UserResponse;
 import com.example.withdog.user.domain.User;
@@ -65,5 +66,29 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.updateProfileImage(userId, otherUserId, image))
                 .isInstanceOf(BusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.UNAUTHORIZED_ACCESS);
+    }
+
+    @Test
+    void 좌표로_프로필을_수정하면_자유입력_지역이_시군구_코드로_정규화된다() {
+        // MockRegionClient: 서울 강남 좌표 -> 11680 서울특별시 강남구
+        userService.updateUserProfile(
+                new UpdateUserProfileRequest("보호자", "강남", 37.4979, 127.0276, "서울 강남구 역삼동"), userId, userId);
+
+        UserResponse response = (UserResponse) userService.getUserDetails(userId, userId);
+        assertThat(response.regionCode()).isEqualTo("11680");
+        assertThat(response.region()).isEqualTo("서울특별시 강남구");
+    }
+
+    @Test
+    void 좌표를_지우면_이전_지역_코드도_함께_지워진다() {
+        userService.updateUserProfile(
+                new UpdateUserProfileRequest("보호자", "강남", 37.4979, 127.0276, "서울 강남구 역삼동"), userId, userId);
+
+        userService.updateUserProfile(
+                new UpdateUserProfileRequest("보호자", "미정", null, null, null), userId, userId);
+
+        UserResponse response = (UserResponse) userService.getUserDetails(userId, userId);
+        assertThat(response.regionCode()).isNull();
+        assertThat(response.region()).isEqualTo("미정");
     }
 }
