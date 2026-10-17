@@ -14,6 +14,8 @@ import com.example.withdog.post.application.dto.UpdatePostRequest;
 import com.example.withdog.post.domain.Post;
 import com.example.withdog.post.domain.PostLike;
 import com.example.withdog.post.domain.PostRoutePoint;
+import com.example.withdog.post.domain.event.PostCreatedEvent;
+import com.example.withdog.post.domain.event.PostDeletedEvent;
 import com.example.withdog.post.infrastructure.PostLikeRepository;
 import com.example.withdog.post.infrastructure.PostRepository;
 import com.example.withdog.region.application.RegionService;
@@ -21,18 +23,15 @@ import com.example.withdog.region.domain.Region;
 import com.example.withdog.user.domain.User;
 import com.example.withdog.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +46,8 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final NotificationService notificationService;
     private final RegionService regionService;
+    private final PostSummaryAssembler postSummaryAssembler;
+    private final ApplicationEventPublisher eventPublisher;
 
     //게시물 작성 (산책 코스 공유는 선택사항)
     @Transactional
@@ -61,6 +62,10 @@ public class PostService {
 
         post.assignRegion(resolveRegionCode(request, author));
         postRepository.save(post);
+        //동네가 정해진 글만 동네 피드에 반영 (커밋 이후 RegionFeedEventListener가 처리)
+        if (post.getRegionCode() != null) {
+            eventPublisher.publishEvent(new PostCreatedEvent(post.getId(), post.getRegionCode()));
+        }
         return PostDetailResponse.of(post, 0, false);
     }
 
@@ -125,16 +130,20 @@ public class PostService {
         List<Comment> topLevelComments = commentRepository.findByPostIdAndParentIsNull(postId);
         topLevelComments.forEach(notificationService::deleteNotificationsForComment);
 
+        String regionCode = post.getRegionCode();
         postLikeRepository.deleteByPostId(postId);
         commentRepository.deleteByPostId(postId);
         postRepository.delete(post);
+        if (regionCode != null) {
+            eventPublisher.publishEvent(new PostDeletedEvent(postId, regionCode));
+        }
     }
 
     //게시물 검색
     @Transactional(readOnly = true)
     public Page<PostSummaryResponse> getPosts(String keyword, Pageable pageable, Long userId) {
         Page<Post> posts = (keyword == null || keyword.isBlank()) ? postRepository.findAll(pageable) : postRepository.findByTitleContaining(keyword, pageable);
-        return toSummaries(posts, userId);
+        return postSummaryAssembler.assemble(posts, userId);
     }
 
     //게시물 좋아요
@@ -161,21 +170,6 @@ public class PostService {
     @Transactional(readOnly = true)
     public Page<PostSummaryResponse> getLikedPosts(Long userId, Pageable pageable) {
         Page<Post> likedPosts = postLikeRepository.findByUserIdOrderByIdDesc(userId, pageable).map(PostLike::getPost);
-        return toSummaries(likedPosts, userId);
-    }
-
-    //N+1 방지: 페이지 내 게시물 전체의 좋아요 수/내 좋아요 여부를 IN 쿼리 2번으로 한 번에 조회
-    private Page<PostSummaryResponse> toSummaries(Page<Post> posts, Long userId) {
-        List<Long> postIds = posts.getContent().stream().map(Post::getId).toList();
-        if (postIds.isEmpty()) {
-            return posts.map(post -> PostSummaryResponse.of(post, 0, false));
-        }
-
-        Map<Long, Long> likeCounts = postLikeRepository.countByPostIds(postIds).stream()
-                .collect(Collectors.toMap(PostLikeRepository.LikeCount::getPostId, PostLikeRepository.LikeCount::getLikeCount));
-        Set<Long> likedPostIds = new HashSet<>(postLikeRepository.findLikedPostIds(userId, postIds));
-
-        return posts.map(post -> PostSummaryResponse.of(
-                post, likeCounts.getOrDefault(post.getId(), 0L), likedPostIds.contains(post.getId())));
+        return postSummaryAssembler.assemble(likedPosts, userId);
     }
 }

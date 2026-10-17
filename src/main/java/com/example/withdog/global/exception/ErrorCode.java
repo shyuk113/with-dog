@@ -32,6 +32,9 @@ public enum ErrorCode {
     COMMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 댓글만 수정/삭제할 수 있습니다."),
     REPLY_DEPTH_EXCEEDED(HttpStatus.BAD_REQUEST, "대댓글에는 답글을 달 수 없습니다."),
 
+    //── Feed ─────────────────────────────────────────────
+    REGION_REQUIRED(HttpStatus.BAD_REQUEST, "동네 정보가 없습니다. 프로필에서 위치를 설정해주세요."),
+
     // AI
     AI_SERVER_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "추천 서버 응답에 실패했습니다."),
     LOCATION_REQUIRED(HttpStatus.BAD_REQUEST, "등록된 위치 정보가 없습니다. 위치를 직접 입력하거나 프로필에서 위치를 설정해주세요."),
