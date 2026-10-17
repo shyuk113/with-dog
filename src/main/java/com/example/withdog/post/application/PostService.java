@@ -16,6 +16,8 @@ import com.example.withdog.post.domain.PostLike;
 import com.example.withdog.post.domain.PostRoutePoint;
 import com.example.withdog.post.domain.event.PostCreatedEvent;
 import com.example.withdog.post.domain.event.PostDeletedEvent;
+import com.example.withdog.post.domain.event.EngagementType;
+import com.example.withdog.post.domain.event.PostEngagementEvent;
 import com.example.withdog.post.infrastructure.PostLikeRepository;
 import com.example.withdog.post.infrastructure.PostRepository;
 import com.example.withdog.region.application.RegionService;
@@ -156,6 +158,7 @@ public class PostService {
             throw new BusinessException(ErrorCode.POST_ALREADY_LIKED);
         }
         postLikeRepository.save(PostLike.createLike(user, post));
+        eventPublisher.publishEvent(PostEngagementEvent.of(postId, post.getRegionCode(), userId, EngagementType.LIKED));
     }
 
     //게시물 좋아요 취소
@@ -164,6 +167,7 @@ public class PostService {
         PostLike postLike = postLikeRepository.findByUserIdAndPostId(userId, postId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.POST_LIKE_NOT_FOUND));
         postLikeRepository.delete(postLike);
+        eventPublisher.publishEvent(PostEngagementEvent.of(postId, postLike.getPost().getRegionCode(), userId, EngagementType.UNLIKED));
     }
 
     //내가 좋아요 누른 게시물 목록 조회

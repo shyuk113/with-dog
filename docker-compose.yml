@@ -1,0 +1,15 @@
+# 로컬 개발용 인프라: Redis + Kafka(KRaft 단일 노드)
+#   docker compose up -d
+# Kafka 경로로 실행하려면 application.yml에 feed.event.transport: kafka 추가 (없으면 direct로 동작)
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: with-dog-redis-compose
+    ports:
+      - "6379:6379"
+
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: with-dog-kafka
+    ports:
+      - "9092:9092"
