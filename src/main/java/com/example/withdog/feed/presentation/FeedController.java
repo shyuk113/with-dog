@@ -1,6 +1,8 @@
 package com.example.withdog.feed.presentation;
 
 import com.example.withdog.feed.application.FeedService;
+import com.example.withdog.feed.application.HotPostService;
+import com.example.withdog.feed.application.dto.HotFeedResponse;
 import com.example.withdog.feed.application.dto.RegionFeedResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FeedController {
 
     private final FeedService feedService;
+    private final HotPostService hotPostService;
 
     //내 동네 최신 글 피드 (커서 기반 페이징: 첫 요청은 cursor 없이, 이후엔 응답의 nextCursor 전달)
     @GetMapping("/region")
@@ -23,5 +26,12 @@ public class FeedController {
                                                             @RequestParam(required = false) Long cursor,
                                                             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(feedService.getRegionFeed(userId, cursor, size));
+    }
+
+    //내 동네 인기글 (최근 3일 좋아요/댓글 점수, 최근 반응일수록 높게 반영)
+    @GetMapping("/region/hot")
+    public ResponseEntity<HotFeedResponse> getHotPosts(@AuthenticationPrincipal Long userId,
+                                                       @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(hotPostService.getHotPosts(userId, size));
     }
 }

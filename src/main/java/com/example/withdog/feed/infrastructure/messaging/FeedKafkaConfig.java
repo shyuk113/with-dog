@@ -35,6 +35,11 @@ public class FeedKafkaConfig {
         return TopicBuilder.name(FeedTopics.POST_ENGAGEMENT).partitions(FeedTopics.PARTITIONS).replicas(1).build();
     }
 
+    @Bean
+    public NewTopic feedPostEngagementDeadLetterTopic() {
+        return TopicBuilder.name(FeedTopics.POST_ENGAGEMENT + FeedTopics.DLT_SUFFIX).partitions(FeedTopics.PARTITIONS).replicas(1).build();
+    }
+
     //일시적 장애(Redis 등)는 1초 간격 3회 재시도 후 DLT로 보내고 다음 메시지를 계속 처리한다
     //JSON 파싱 실패처럼 재시도해도 결과가 같은 메시지는 바로 DLT로 보낸다
     @Bean
