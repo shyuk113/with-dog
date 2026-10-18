@@ -2,6 +2,8 @@ package com.example.withdog.feed.infrastructure.messaging;
 
 import com.example.withdog.comment.application.CommentService;
 import com.example.withdog.comment.application.dto.CreateCommentRequest;
+import com.example.withdog.feed.application.HotPostService;
+import com.example.withdog.feed.infrastructure.HotPostRepository;
 import com.example.withdog.feed.infrastructure.RegionFeedRepository;
 import com.example.withdog.post.application.PostService;
 import com.example.withdog.post.application.dto.CreatePostRequest;
@@ -27,6 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +55,8 @@ class FeedKafkaIntegrationTest {
     @Autowired private UserRepository userRepository;
     @Autowired private PostRepository postRepository;
     @Autowired private RegionFeedRepository regionFeedRepository;
+    @Autowired private HotPostService hotPostService;
+    @Autowired private HotPostRepository hotPostRepository;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
     @Autowired private ObjectMapper objectMapper;
 
@@ -67,6 +72,7 @@ class FeedKafkaIntegrationTest {
     @BeforeEach
     void setUp() {
         regionFeedRepository.deleteFeed(GANGNAM);
+        hotPostRepository.deleteRecent(GANGNAM, LocalDate.now(HotPostService.ZONE));
         author = createUser("카프카작성자", "kafka-author@example.com", 37.4979, 127.0276);
         neighbor = createUser("카프카이웃", "kafka-neighbor@example.com", 37.5000, 127.0300);
     }
@@ -82,6 +88,7 @@ class FeedKafkaIntegrationTest {
         awaitUntil(() -> regionFeedRepository.findPostIds(GANGNAM, null, 10).isEmpty());
         userRepository.deleteAllById(createdUserIds);
         regionFeedRepository.deleteFeed(GANGNAM);
+        hotPostRepository.deleteRecent(GANGNAM, LocalDate.now(HotPostService.ZONE));
     }
 
     @Test
@@ -102,7 +109,7 @@ class FeedKafkaIntegrationTest {
     }
 
     @Test
-    void 좋아요와_댓글은_engagement_토픽으로_발행된다() {
+    void 좋아요와_댓글은_engagement_토픽으로_발행되고_인기글_점수에_반영된다() {
         Long postId = write(author, "반응 받을 글");
         postService.likePost(postId, neighbor);
         commentService.createComment(new CreateCommentRequest("좋은 코스네요", null), postId, neighbor);
@@ -125,6 +132,10 @@ class FeedKafkaIntegrationTest {
             assertThat(message.userId()).isEqualTo(neighbor);
             assertThat(message.eventId()).isNotBlank();
         });
+
+        //HotPostKafkaConsumer가 반영한 동네 인기글 점수: 좋아요 1 + 댓글 2
+        awaitUntil(() -> hotPostService.getHotPosts(neighbor, 10).posts().stream()
+                .anyMatch(p -> p.post().id().equals(postId) && p.score() == 3.0));
     }
 
     @Test
