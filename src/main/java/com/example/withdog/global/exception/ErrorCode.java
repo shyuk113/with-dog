@@ -21,6 +21,11 @@ public enum ErrorCode {
     //── Dog ──────────────────────────────────────────
     DOG_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 강아지입니다."),
 
+    //── Schedule ──────────────────────────────────────────
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다."),
+    INVALID_SCHEDULE_TIME(HttpStatus.BAD_REQUEST, "종료 시간은 시작 시간보다 빠를 수 없습니다."),
+    INVALID_SCHEDULE_PERIOD(HttpStatus.BAD_REQUEST, "조회 기간이 올바르지 않습니다. 시작일이 종료일보다 늦거나 62일을 넘을 수 없습니다."),
+
     //── Post ──────────────────────────────────────────
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."),
     POST_FORBIDDEN(HttpStatus.FORBIDDEN, "본인이 작성한 게시글만 수정/삭제할 수 있습니다."),
