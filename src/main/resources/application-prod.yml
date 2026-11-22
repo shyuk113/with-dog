@@ -6,7 +6,9 @@ spring:
   datasource:
     # DB는 utf8mb4로 생성해야 이모지가 포함된 게시글/댓글도 저장된다
     #   CREATE DATABASE withdog CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:withdog}?characterEncoding=UTF-8&connectionTimeZone=Asia/Seoul&forceConnectionTimeZoneToSession=true
+    # 시간대 옵션(connectionTimeZone, hibernate.jdbc.time_zone 등)은 넣지 않는다
+    #   시각은 시간대 없는 DATETIME에 변환 없이 저장하고, 기준 시간대(KST)는 WithdogApplication에서 고정
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:withdog}?characterEncoding=UTF-8
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
@@ -18,11 +20,6 @@ spring:
       # 운영에서는 스키마를 자동 변경하지 않고 엔티티와 일치하는지만 검사한다
       # 최초 배포처럼 스키마가 없을 때만 JPA_DDL_AUTO=update로 한 번 실행 (이후 Flyway 등 마이그레이션 도구 권장)
       ddl-auto: ${JPA_DDL_AUTO:validate}
-    properties:
-      hibernate:
-        # LocalDateTime을 한국 시간 기준 그대로 저장/조회
-        jdbc:
-          time_zone: Asia/Seoul
   servlet:
     multipart:
       max-file-size: 10MB
