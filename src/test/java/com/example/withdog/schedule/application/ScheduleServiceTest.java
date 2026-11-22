@@ -2,7 +2,7 @@ package com.example.withdog.schedule.application;
 
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.infrastructure.DogJpaRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.schedule.application.dto.request.CreateScheduleRequest;
@@ -11,9 +11,9 @@ import com.example.withdog.schedule.application.dto.request.UpdateStatus;
 import com.example.withdog.schedule.application.dto.response.ScheduleResponse;
 import com.example.withdog.schedule.domain.ScheduleStatus;
 import com.example.withdog.schedule.domain.ScheduleType;
-import com.example.withdog.schedule.infrastructure.ScheduleRepository;
+import com.example.withdog.schedule.infrastructure.ScheduleJpaRepository;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,9 +35,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ScheduleServiceTest {
 
     @Autowired private ScheduleService scheduleService;
-    @Autowired private ScheduleRepository scheduleRepository;
+    @Autowired private ScheduleJpaRepository scheduleRepository;
     @Autowired private UserRepository userRepository;
-    @Autowired private DogRepository dogRepository;
+    @Autowired private DogJpaRepository dogRepository;
     @Autowired private EntityManager entityManager;
 
     private Long userId;

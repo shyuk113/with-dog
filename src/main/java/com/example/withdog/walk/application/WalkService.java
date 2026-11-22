@@ -1,20 +1,20 @@
 package com.example.withdog.walk.application;
 
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.mission.application.MissionService;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
 import com.example.withdog.walk.application.dto.UpdateWalkRequest;
 import com.example.withdog.walk.application.dto.WalkDetailResponse;
 import com.example.withdog.walk.application.dto.WalkResponse;
 import com.example.withdog.walk.domain.RoutePoint;
 import com.example.withdog.walk.domain.Walk;
-import com.example.withdog.walk.infrastructure.RoutePointRepository;
-import com.example.withdog.walk.infrastructure.WalkRepository;
+import com.example.withdog.walk.domain.RoutePointRepository;
+import com.example.withdog.walk.domain.WalkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

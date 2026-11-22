@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+//Spring Data JPA 구현 기술. 서비스는 이 인터페이스가 아니라 domain의 UserRepository에 의존한다
+public interface UserJpaRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByEmail(String email);
 

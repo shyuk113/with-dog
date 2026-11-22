@@ -1,7 +1,7 @@
 package com.example.withdog.schedule.application;
 
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.schedule.application.dto.request.CreateScheduleRequest;
@@ -11,9 +11,9 @@ import com.example.withdog.schedule.application.dto.response.ScheduleResponse;
 import com.example.withdog.schedule.domain.Schedule;
 import com.example.withdog.schedule.domain.ScheduleStatus;
 import com.example.withdog.schedule.domain.ScheduleType;
-import com.example.withdog.schedule.infrastructure.ScheduleRepository;
+import com.example.withdog.schedule.domain.ScheduleRepository;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

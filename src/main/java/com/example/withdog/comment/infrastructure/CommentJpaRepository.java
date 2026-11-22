@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+//Spring Data JPA 구현 기술. 서비스는 이 인터페이스가 아니라 domain의 CommentRepository에 의존한다
+public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
 
     Page<Comment> findByPostId(Pageable pageable, Long postId);
 

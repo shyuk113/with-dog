@@ -1,7 +1,7 @@
 package com.example.withdog.post.application;
 
 import com.example.withdog.comment.domain.Comment;
-import com.example.withdog.comment.infrastructure.CommentRepository;
+import com.example.withdog.comment.domain.CommentRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.global.infrastructure.storage.ImageStorageService;
@@ -18,12 +18,12 @@ import com.example.withdog.post.domain.event.PostCreatedEvent;
 import com.example.withdog.post.domain.event.PostDeletedEvent;
 import com.example.withdog.post.domain.event.EngagementType;
 import com.example.withdog.post.domain.event.PostEngagementEvent;
-import com.example.withdog.post.infrastructure.PostLikeRepository;
-import com.example.withdog.post.infrastructure.PostRepository;
+import com.example.withdog.post.domain.PostLikeRepository;
+import com.example.withdog.post.domain.PostRepository;
 import com.example.withdog.region.application.RegionService;
 import com.example.withdog.region.domain.Region;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;

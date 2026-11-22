@@ -2,7 +2,7 @@ package com.example.withdog.recommend.application;
 
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.recommend.application.dto.RecommendResponse;
@@ -11,7 +11,7 @@ import com.example.withdog.recommend.infrastructure.ai.AiModelClient;
 import com.example.withdog.route.application.RouteService;
 import com.example.withdog.route.domain.RouteStep;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import com.example.withdog.weather.application.WeatherService;
 import com.example.withdog.weather.domain.WeatherInfo;
 import org.junit.jupiter.api.BeforeEach;

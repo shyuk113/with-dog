@@ -2,16 +2,16 @@ package com.example.withdog.mission.application;
 
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.infrastructure.DogJpaRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.mission.application.dto.MissionResponse;
 import com.example.withdog.mission.application.dto.WeeklyMissionSummaryResponse;
 import com.example.withdog.mission.domain.MissionType;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import com.example.withdog.walk.domain.Walk;
-import com.example.withdog.walk.infrastructure.WalkRepository;
+import com.example.withdog.walk.domain.WalkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class MissionServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private DogRepository dogRepository;
+    private DogJpaRepository dogRepository;
 
     @Autowired
     private WalkRepository walkRepository;

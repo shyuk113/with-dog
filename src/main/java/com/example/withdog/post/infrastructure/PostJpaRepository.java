@@ -10,7 +10,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+//Spring Data JPA 구현 기술. 서비스는 이 인터페이스가 아니라 domain의 PostRepository에 의존한다
+public interface PostJpaRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByTitleContaining(String keyword, Pageable pageable);
 
