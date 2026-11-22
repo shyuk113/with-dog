@@ -38,6 +38,8 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
+    //READ는 MySQL 예약어라 컬럼명을 그대로 쓰면 테이블 생성/조회가 실패한다
+    @Column(name = "is_read", nullable = false)
     private boolean read;
 
     @Builder

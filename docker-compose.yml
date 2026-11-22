@@ -1,4 +1,4 @@
-# 로컬 개발용 인프라: Redis + Kafka(KRaft 단일 노드)
+# 로컬 개발용 인프라: Redis + Kafka(KRaft 단일 노드) + MySQL(prod 프로필 확인용)
 #   docker compose up -d
 # Kafka 경로로 실행하려면 application.yml에 feed.event.transport: kafka 추가 (없으면 direct로 동작)
 services:
@@ -13,3 +13,15 @@ services:
     container_name: with-dog-kafka
     ports:
       - "9092:9092"
+
+  mysql:
+    image: mysql:8.4
+    container_name: with-dog-mysql
+    environment:
+      MYSQL_DATABASE: withdog
+      MYSQL_USER: withdog
+      MYSQL_PASSWORD: withdog
+      MYSQL_ROOT_PASSWORD: root
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"

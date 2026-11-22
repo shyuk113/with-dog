@@ -36,7 +36,8 @@ public class Dog extends BaseEntity {
     // 급여량 추천 등에 활용되는 지병/건강상태 (예: 비만, 저체중, 신장질환)
     @ElementCollection
     @CollectionTable(name = "dog_health_condition", joinColumns = @JoinColumn(name = "dog_id"))
-    @Column(name = "condition")
+    //CONDITION은 MySQL 예약어라 컬럼명을 그대로 쓰면 테이블 생성이 실패한다
+    @Column(name = "health_condition")
     private List<String> healthConditions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
