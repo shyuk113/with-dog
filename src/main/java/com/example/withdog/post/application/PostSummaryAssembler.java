@@ -2,7 +2,7 @@ package com.example.withdog.post.application;
 
 import com.example.withdog.post.application.dto.PostSummaryResponse;
 import com.example.withdog.post.domain.Post;
-import com.example.withdog.post.infrastructure.PostLikeRepository;
+import com.example.withdog.post.domain.PostLikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

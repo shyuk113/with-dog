@@ -4,12 +4,12 @@ import com.example.withdog.dog.application.dto.DogResponse;
 import com.example.withdog.dog.application.dto.UpdateHealthConditionsRequest;
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.global.constant.DefaultImages;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

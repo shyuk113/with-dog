@@ -2,9 +2,9 @@ package com.example.withdog.walk.application;
 
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import com.example.withdog.walk.application.dto.CreateWalkRequest;
 import com.example.withdog.walk.application.dto.RoutePointRequest;
 import com.example.withdog.walk.application.dto.UpdateWalkRequest;

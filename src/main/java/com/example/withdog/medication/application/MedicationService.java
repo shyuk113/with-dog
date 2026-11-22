@@ -1,12 +1,12 @@
 package com.example.withdog.medication.application;
 
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.domain.DogRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.medication.application.dto.MedicationResponse;
 import com.example.withdog.medication.domain.Medication;
-import com.example.withdog.medication.infrastructure.MedicationRepository;
+import com.example.withdog.medication.domain.MedicationRepository;
 import com.example.withdog.medication.infrastructure.ocr.OcrClient;
 import com.example.withdog.medication.infrastructure.ocr.OcrResult;
 import com.example.withdog.global.infrastructure.storage.ImageStorageService;

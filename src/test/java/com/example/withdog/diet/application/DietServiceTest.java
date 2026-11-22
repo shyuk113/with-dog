@@ -7,11 +7,11 @@ import com.example.withdog.diet.application.dto.FoodItemResponse;
 import com.example.withdog.diet.domain.FoodType;
 import com.example.withdog.dog.domain.Breed;
 import com.example.withdog.dog.domain.Dog;
-import com.example.withdog.dog.infrastructure.DogRepository;
+import com.example.withdog.dog.infrastructure.DogJpaRepository;
 import com.example.withdog.global.exception.BusinessException;
 import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ class DietServiceTest {
     private UserRepository userRepository;
 
     @Autowired
-    private DogRepository dogRepository;
+    private DogJpaRepository dogRepository;
 
     private Long userId;
     private Long dogId;

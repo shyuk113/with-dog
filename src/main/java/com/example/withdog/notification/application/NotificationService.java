@@ -6,7 +6,7 @@ import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.notification.application.dto.NotificationResponse;
 import com.example.withdog.notification.domain.Notification;
 import com.example.withdog.notification.domain.NotificationType;
-import com.example.withdog.notification.infrastructure.NotificationRepository;
+import com.example.withdog.notification.domain.NotificationRepository;
 import com.example.withdog.post.domain.Post;
 import com.example.withdog.user.domain.User;
 import lombok.RequiredArgsConstructor;

@@ -7,11 +7,11 @@ import com.example.withdog.global.exception.ErrorCode;
 import com.example.withdog.post.application.PostService;
 import com.example.withdog.post.application.dto.CreatePostRequest;
 import com.example.withdog.post.application.dto.PostSummaryResponse;
-import com.example.withdog.post.infrastructure.PostRepository;
+import com.example.withdog.post.infrastructure.PostJpaRepository;
 import com.example.withdog.user.application.UserService;
 import com.example.withdog.user.application.dto.UpdateUserProfileRequest;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.infrastructure.UserJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,8 +37,8 @@ class FeedServiceTest {
     @Autowired private FeedService feedService;
     @Autowired private PostService postService;
     @Autowired private UserService userService;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PostRepository postRepository;
+    @Autowired private UserJpaRepository userRepository;
+    @Autowired private PostJpaRepository postRepository;
     @Autowired private RegionFeedRepository regionFeedRepository;
 
     private final List<Long> createdUserIds = new ArrayList<>();

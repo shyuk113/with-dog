@@ -9,7 +9,7 @@ import com.example.withdog.user.application.dto.UserProfileResponse;
 import com.example.withdog.user.application.dto.UserPublicResponse;
 import com.example.withdog.user.application.dto.UserResponse;
 import com.example.withdog.user.domain.User;
-import com.example.withdog.user.infrastructure.UserRepository;
+import com.example.withdog.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
